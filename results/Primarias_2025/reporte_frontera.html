@@ -1,0 +1,735 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reporte de Métricas de Frontera</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    h1, h2 { margin: 0.6em 0; }
+    .kpis { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 24px; }
+    .kpi { border: 1px solid #ddd; padding: 12px 16px; border-radius: 8px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #eee; border-radius: 8px; padding: 12px; }
+    img { max-width: 100%; height: auto; border: 1px solid #eee; border-radius: 6px; }
+    .table { border-collapse: collapse; width: 100%; }
+    .table th, .table td { border: 1px solid #eee; padding: 6px 8px; text-align: center; }
+    .muted { color: #666; font-size: 0.95em; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Inter', Arial, sans-serif; } </style>
+    <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <h1>Reporte de Métricas de Frontera</h1>
+  <div class="kpis">
+    <div class="kpi"><b>Total de nodos</b><br>12080</div>
+    <div class="kpi"><b>Cluster 1</b><br>1424</div>
+    <div class="kpi"><b>Cluster -1</b><br>1858</div>
+    <div class="kpi"><b>Neutrales (0)</b><br>8798</div>
+  </div>
+
+  <h2>Tablas destacadas</h2>
+  <div class="card" style="overflow-x:auto;">
+    <h3>Top 15 Índice de Frontera</h3>
+    <table class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>s_eq</th>
+      <th>indice_frontera</th>
+      <th>d_anom</th>
+      <th>p_anom</th>
+      <th>degree_total</th>
+      <th>CLUSTER</th>
+    </tr>
+    <tr>
+      <th>node</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>José Antonio Kast</th>
+      <td>-0.042</td>
+      <td>2.416</td>
+      <td>12</td>
+      <td>0.121</td>
+      <td>322</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Evelyn Matthei</th>
+      <td>0.231</td>
+      <td>2.061</td>
+      <td>17</td>
+      <td>0.104</td>
+      <td>552</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Johannes Kaiser</th>
+      <td>0.117</td>
+      <td>2.003</td>
+      <td>7</td>
+      <td>0.103</td>
+      <td>209</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Carolina Tohá</th>
+      <td>-0.261</td>
+      <td>1.986</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>583</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Nicolás Grau</th>
+      <td>-0.039</td>
+      <td>1.898</td>
+      <td>14</td>
+      <td>0.350</td>
+      <td>106</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Gonzalo Durán</th>
+      <td>0.000</td>
+      <td>1.886</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>85</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Patricio Cooper</th>
+      <td>0.015</td>
+      <td>1.834</td>
+      <td>2</td>
+      <td>0.061</td>
+      <td>82</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Alberto Larraín</th>
+      <td>-0.048</td>
+      <td>1.785</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>87</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Alberto Undurraga</th>
+      <td>0.122</td>
+      <td>1.670</td>
+      <td>7</td>
+      <td>0.194</td>
+      <td>100</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Paulina Núñez</th>
+      <td>0.073</td>
+      <td>1.663</td>
+      <td>9</td>
+      <td>0.409</td>
+      <td>76</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Julio Salas</th>
+      <td>-0.055</td>
+      <td>1.655</td>
+      <td>2</td>
+      <td>0.077</td>
+      <td>68</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Presidente de la República</th>
+      <td>0.000</td>
+      <td>1.629</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>50</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Ministerio Público</th>
+      <td>-0.048</td>
+      <td>1.597</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>58</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Henry Leal</th>
+      <td>-0.080</td>
+      <td>1.543</td>
+      <td>2</td>
+      <td>0.074</td>
+      <td>60</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Juan Antonio Coloma</th>
+      <td>-0.067</td>
+      <td>1.540</td>
+      <td>1</td>
+      <td>0.042</td>
+      <td>56</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+  <div class="card" style="overflow-x:auto; margin-top:16px;">
+    <h3>Top 15 Grado Anómalo Externo</h3>
+    <table class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>d_anom</th>
+      <th>p_anom</th>
+      <th>s_eq</th>
+      <th>indice_frontera</th>
+      <th>degree_total</th>
+      <th>CLUSTER</th>
+    </tr>
+    <tr>
+      <th>node</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Gabriel Boric</th>
+      <td>35</td>
+      <td>0.232</td>
+      <td>-0.511</td>
+      <td>1.299</td>
+      <td>828</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Evelyn Matthei</th>
+      <td>17</td>
+      <td>0.104</td>
+      <td>0.231</td>
+      <td>2.061</td>
+      <td>552</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Nicolás Grau</th>
+      <td>14</td>
+      <td>0.350</td>
+      <td>-0.039</td>
+      <td>1.898</td>
+      <td>106</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>José Antonio Kast</th>
+      <td>12</td>
+      <td>0.121</td>
+      <td>-0.042</td>
+      <td>2.416</td>
+      <td>322</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Paulina Núñez</th>
+      <td>9</td>
+      <td>0.409</td>
+      <td>0.073</td>
+      <td>1.663</td>
+      <td>76</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Matías Walker</th>
+      <td>8</td>
+      <td>0.533</td>
+      <td>-0.143</td>
+      <td>1.271</td>
+      <td>43</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Gonzalo Winter</th>
+      <td>8</td>
+      <td>0.133</td>
+      <td>-0.512</td>
+      <td>1.067</td>
+      <td>321</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Luis Cordero</th>
+      <td>8</td>
+      <td>0.267</td>
+      <td>-0.277</td>
+      <td>1.346</td>
+      <td>112</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Luiz Inácio Lula da Silva</th>
+      <td>8</td>
+      <td>0.727</td>
+      <td>-0.048</td>
+      <td>1.439</td>
+      <td>41</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>José Miguel Castro</th>
+      <td>7</td>
+      <td>0.318</td>
+      <td>-0.154</td>
+      <td>1.453</td>
+      <td>71</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Mario Marcel</th>
+      <td>7</td>
+      <td>0.175</td>
+      <td>-0.316</td>
+      <td>1.391</td>
+      <td>168</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Alberto Undurraga</th>
+      <td>7</td>
+      <td>0.194</td>
+      <td>0.122</td>
+      <td>1.670</td>
+      <td>100</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Johannes Kaiser</th>
+      <td>7</td>
+      <td>0.103</td>
+      <td>0.117</td>
+      <td>2.003</td>
+      <td>209</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Jeannette Jara</th>
+      <td>7</td>
+      <td>0.090</td>
+      <td>-0.478</td>
+      <td>1.203</td>
+      <td>382</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Diego Ibáñez</th>
+      <td>7</td>
+      <td>0.389</td>
+      <td>-0.200</td>
+      <td>1.194</td>
+      <td>47</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+  <div class="card" style="overflow-x:auto; margin-top:16px;">
+    <h3>Top 10 Grado por Cluster 1</h3>
+    <table class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>degree_total</th>
+      <th>s_eq</th>
+      <th>indice_frontera</th>
+      <th>d_anom</th>
+      <th>p_anom</th>
+      <th>CLUSTER</th>
+    </tr>
+    <tr>
+      <th>node</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Donald Trump</th>
+      <td>604</td>
+      <td>0.658</td>
+      <td>0.796</td>
+      <td>3</td>
+      <td>0.039</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Evelyn Matthei</th>
+      <td>552</td>
+      <td>0.231</td>
+      <td>2.061</td>
+      <td>17</td>
+      <td>0.104</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>José Antonio Kast</th>
+      <td>322</td>
+      <td>-0.042</td>
+      <td>2.416</td>
+      <td>12</td>
+      <td>0.121</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Johannes Kaiser</th>
+      <td>209</td>
+      <td>0.117</td>
+      <td>2.003</td>
+      <td>7</td>
+      <td>0.103</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Javier Milei</th>
+      <td>155</td>
+      <td>0.661</td>
+      <td>0.561</td>
+      <td>6</td>
+      <td>0.316</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Nicolás Grau</th>
+      <td>106</td>
+      <td>-0.039</td>
+      <td>1.898</td>
+      <td>14</td>
+      <td>0.350</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Alberto Undurraga</th>
+      <td>100</td>
+      <td>0.122</td>
+      <td>1.670</td>
+      <td>7</td>
+      <td>0.194</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Patricio Cooper</th>
+      <td>82</td>
+      <td>0.015</td>
+      <td>1.834</td>
+      <td>2</td>
+      <td>0.061</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Manuel Monsalve</th>
+      <td>69</td>
+      <td>0.481</td>
+      <td>0.762</td>
+      <td>1</td>
+      <td>0.071</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Franco Parisi</th>
+      <td>67</td>
+      <td>0.154</td>
+      <td>1.430</td>
+      <td>1</td>
+      <td>0.045</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+  <div class="card" style="overflow-x:auto; margin-top:16px;">
+    <h3>Top 10 Grado por Cluster -1</h3>
+    <table class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>degree_total</th>
+      <th>s_eq</th>
+      <th>indice_frontera</th>
+      <th>d_anom</th>
+      <th>p_anom</th>
+      <th>CLUSTER</th>
+    </tr>
+    <tr>
+      <th>node</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Gabriel Boric</th>
+      <td>828</td>
+      <td>-0.511</td>
+      <td>1.299</td>
+      <td>35</td>
+      <td>0.232</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Jeannette Jara</th>
+      <td>382</td>
+      <td>-0.478</td>
+      <td>1.203</td>
+      <td>7</td>
+      <td>0.090</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Gonzalo Winter</th>
+      <td>321</td>
+      <td>-0.512</td>
+      <td>1.067</td>
+      <td>8</td>
+      <td>0.133</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Mario Marcel</th>
+      <td>168</td>
+      <td>-0.316</td>
+      <td>1.391</td>
+      <td>7</td>
+      <td>0.175</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Claudio Orrego</th>
+      <td>166</td>
+      <td>-0.522</td>
+      <td>0.885</td>
+      <td>3</td>
+      <td>0.094</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Paulina Vodanovic</th>
+      <td>164</td>
+      <td>-0.533</td>
+      <td>0.856</td>
+      <td>4</td>
+      <td>0.143</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Jaime Mulet</th>
+      <td>151</td>
+      <td>-0.500</td>
+      <td>0.914</td>
+      <td>4</td>
+      <td>0.138</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Francisco</th>
+      <td>126</td>
+      <td>-0.848</td>
+      <td>0.180</td>
+      <td>1</td>
+      <td>0.125</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Luis Cordero</th>
+      <td>112</td>
+      <td>-0.277</td>
+      <td>1.346</td>
+      <td>8</td>
+      <td>0.267</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>Claudia Sheinbaum</th>
+      <td>108</td>
+      <td>-0.639</td>
+      <td>0.545</td>
+      <td>4</td>
+      <td>0.308</td>
+      <td>-1</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+
+  <h2>Figuras</h2>
+  <div class="grid">
+    <div class="card"><img src="1_mapa_sesgo_equilibrio.png" alt="1_mapa_sesgo_equilibrio.png"><div class="muted">1_mapa_sesgo_equilibrio.png</div></div><div class="card"><img src="2_espectro_frontera.png" alt="2_espectro_frontera.png"><div class="muted">2_espectro_frontera.png</div></div><div class="card"><img src="3_matriz_correlacion.png" alt="3_matriz_correlacion.png"><div class="muted">3_matriz_correlacion.png</div></div><div class="card"><img src="4_pca_ecosistema.png" alt="4_pca_ecosistema.png"><div class="muted">4_pca_ecosistema.png</div></div><div class="card"><img src="neutrales_inclinacion_vs_actividad.png" alt="neutrales_inclinacion_vs_actividad.png"><div class="muted">neutrales_inclinacion_vs_actividad.png</div></div>
+  </div>
+
+  <p class="muted">Generado automáticamente por run_metrics.py</p>
+
+  <h2 style="margin-top:28px;">Anexo: Métricas y Fórmulas</h2>
+  <div class="card"> 
+    <div class="md-content">
+      <h1>Métricas para el Análisis de Polarización en Redes Signadas</h1>
+<br>
+<h2>1. Métricas de Posicionamiento Estructural</h2>
+<br>
+<p>Estas métricas caracterizan la ubicación, inclinación e influencia de cada nodo dentro de la arquitectura global del conflicto, revelando el rol estructural que cada actor desempeña en la dinámica de polarización.</p>
+<br>
+<h3>1.1. Sesgo de Equilibrio ($S_{eq}$)</h3>
+<br>
+<p>Definición: cuantifica la inclinación o lealtad estructural de un nodo hacia uno de los dos polos, basada en el balance total de sus conexiones.</p>
+<br>
+<p>Fórmula: $S_{eq}(v) = \frac{d_{C1}(v) - d_{C2}(v)}{d_{C1}(v) + d_{C2}(v)}$</p>
+<br>
+<p>donde d_Ci(v) representa el grado total (conexiones) del nodo v hacia el clúster i.</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>S_eq(v) = +1: lealtad estructural total al Clúster 1</li>
+<li>S_eq(v) = −1: lealtad estructural total al Clúster 2  </li>
+<li>S_eq(v) = 0: nodo perfectamente balanceado o fronterizo</li>
+<li>|S_eq(v)| &lt; 0.2: zona de alta ambigüedad estructural</li>
+</ul>
+<br>
+<h3>1.2. Centralidad de Autovector del Núcleo</h3>
+<br>
+<p>Definición: mide la prominencia e influencia de un actor dentro del núcleo polarizado del conflicto (excluye actores neutrales). Captura que un actor es central si está fuertemente conectado a otros actores centrales.</p>
+<br>
+<p>Contexto del vector de asignación: se parte de c ∈ {−1, 0, 1}^n que asigna cada nodo a su clúster:</p>
+<ul>
+<li>c_i = +1: nodo en Clúster 1</li>
+<li>c_i = −1: nodo en Clúster 2  </li>
+<li>c_i = 0: nodo neutral (excluido del núcleo polarizado)</li>
+</ul>
+<br>
+<p>Fórmula (cociente de Rayleigh): $x_1 = \arg\max_{x \neq 0} \frac{x^T A_p x}{x^T x}$</p>
+<br>
+<p>donde A_p ∈ R^{m×m} es la submatriz de adyacencia signada que contiene únicamente las interacciones entre los m = |V_p| nodos del núcleo polarizado (c_i ≠ 0).</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>Signo (+/−): polaridad del actor en la dinámica del conflicto</li>
+<li>Magnitud |x₁(v)|: nivel de influencia y cohesión dentro de su polo</li>
+<li>Valores cercanos a cero: actores estructuralmente ambiguos en la frontera del clivaje</li>
+<li>Relación con c: el signo de x₁(v) suele coincidir con c_v, su magnitud revela centralidad real</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<h2>2. Métricas de Comportamiento Anómalo y Agencia de Frontera</h2>
+<br>
+<p>Enfocadas en detectar y cuantificar comportamientos que desafían la división estricta de la red, identificando actores con potencial transformador o de mediación.</p>
+<br>
+<h3>2.1. Conexiones Anómalas (cálculo auxiliar)</h3>
+<br>
+<p>Definición: estimación del número de conexiones dirigidas hacia el clúster minoritario para un nodo dado. Base para métricas de frontera.</p>
+<br>
+<p>Fórmula: $\mathrm{Conexiones\_Anom}(v) = d_{total}(v) \cdot \frac{1 - |S_{eq}(v)|}{2}$</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>Máximo cuando S_eq(v) = 0 (nodo perfectamente fronterizo)</li>
+<li>Mínimo (0) cuando |S_eq(v)| = 1 (lealtad total a un polo)</li>
+</ul>
+<br>
+<h3>2.2. Índice de Frontera</h3>
+<br>
+<p>Definición: métrica compuesta que combina proporción y volumen absoluto de conexiones anómalas para identificar puentes significativos entre clústeres.</p>
+<br>
+<p>Fórmula: $\mathrm{Indice\_Frontera}(v) = \left( \frac{\mathrm{Conexiones\_Anom}(v)}{d_{total}(v)} \right) \cdot \ln\big(1 + \mathrm{Conexiones\_Anom}(v)\big)$</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>Valores altos: candidatos robustos a elementos de frontera con agencia transformadora</li>
+<li>Componente proporcional: normaliza por la actividad total del nodo</li>
+<li>Componente logarítmica: penaliza nodos con pocas conexiones anómalas absolutas</li>
+</ul>
+<br>
+<h3>2.3. Grado Anómalo Externo ($d_{anom}$)</h3>
+<br>
+<p>Definición: cuenta directa del número de conexiones positivas (afinidad/apoyo) que un actor mantiene con miembros del clúster opuesto.</p>
+<br>
+<p>Fórmula: $d_{anom}(v) = d_{inter}^{+}(v)$</p>
+<br>
+<p>donde d_inter⁺(v) son las aristas positivas inter-clúster del nodo v.</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>Medida absoluta de “puentes de afinidad” hacia el bando contrario</li>
+<li>Cuantifica directamente el comportamiento no polarizado</li>
+<li>Valor 0 indica polarización perfecta en relaciones externas</li>
+</ul>
+<br>
+<h3>2.4. Proporción de Anomalía Externa ($P_{anom}$)</h3>
+<br>
+<p>Definición: normalización de la métrica anterior que calcula el porcentaje de conexiones inter-clúster que son positivas.</p>
+<br>
+<p>Fórmula: $P_{anom}(v) = \frac{d_{inter}^{+}(v)}{d_{inter}(v)}$</p>
+<br>
+<p>Interpretación:</p>
+<ul>
+<li>P_anom(v) = 1: anomalía total (todas las conexiones externas son de afinidad)</li>
+<li>P_anom(v) = 0: polarización perfecta (todas las conexiones externas son de conflicto)  </li>
+<li>P_anom(v) = 0.5: máxima ambigüedad relacional externa</li>
+<li>P_anom(v) &gt; 0.7: comportamiento fuertemente mediador</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<h2>3. Síntesis: Tipología de Actores</h2>
+<br>
+<p>Combinando estas métricas se identifican arquetipos clave:</p>
+<br>
+<ul>
+<li>Actores nucleares: alto |x₁|, |S_eq| &gt; 0.8, P_anom &lt; 0.2  </li>
+<li>Actores de frontera: |S_eq| &lt; 0.3, alto Índice de Frontera  </li>
+<li>Mediadores activos: d_anom &gt; 0, P_anom &gt; 0.5  </li>
+<li>Puentes estructurales: alto grado externo, S_eq moderado</li>
+</ul>
+<br>
+<p>Esta tipología facilita identificar actores clave para entender la reproducción y la transformación potencial de la estructura de clivaje.</p>
+    </div>
+  </div>
+
+</body>
+</html>
