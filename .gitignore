@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+data/
 
 # Distribution / packaging
 .Python
@@ -205,3 +206,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+data/datasets_cluster/Plebiscito_2022_clustered_20250829_155823.csv
+data/datasets_cluster/Plebiscito_2022_clustered_20250827_170329.csv
+data/datasets_cluster/Plebiscito_2022_metrics_20250827_170329.csv
+data/datasets_cluster/Plebiscito_2022_nodes_clusters_20250827_170329.csv
+data/datasets_cluster/Plebiscito_2022_metrics_20250829_155823.csv
+data/datasets_cluster/Plebiscito_2022_nodes_clusters_20250829_155823.csv
+data/datasets_cluster/Primarias_2025_clustered_20250827_170342.csv
+data/datasets_cluster/Primarias_2025_clustered_20250829_155832.csv
+data/datasets_cluster/Primarias_2025_metrics_20250827_170342.csv
+data/datasets_cluster/Primarias_2025_metrics_20250829_155832.csv
+data/datasets_cluster/Primarias_2025_nodes_clusters_20250827_170342.csv
+data/raw/df_plebiscito_2022.csv
+data/raw/primarias2025.csv
+data/datasets_cluster/Primarias_2025_nodes_clusters_20250829_155832.csv
