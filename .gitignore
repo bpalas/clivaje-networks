@@ -220,3 +220,5 @@ data/datasets_cluster/Primarias_2025_nodes_clusters_20250827_170342.csv
 data/raw/df_plebiscito_2022.csv
 data/raw/primarias2025.csv
 data/datasets_cluster/Primarias_2025_nodes_clusters_20250829_155832.csv
+results/primarias2025_pcd_manual/nodes_metrics_pcd_manual_20250903_110734.csv
+results/primarias2025_pcd_manual/top_20_sh_star_esp_20250903_110734.csv

@@ -116,6 +116,7 @@ def calculate_anomaly_metrics(G: nx.Graph, s_eq: dict):
     indice_frontera = {}
     d_anom = {}
     p_anom = {}
+    d_inter = {}
 
     for node in G.nodes():
         node_cluster = G.nodes[node].get('cluster')
@@ -147,13 +148,14 @@ def calculate_anomaly_metrics(G: nx.Graph, s_eq: dict):
                     inter_pos += 1
         d_anom[node] = inter_pos
         p_anom[node] = (inter_pos / inter_tot) if inter_tot > 0 else 0.0
+        d_inter[node] = inter_tot
 
-    return conexiones_anomalas, indice_frontera, d_anom, p_anom
+    return conexiones_anomalas, indice_frontera, d_anom, p_anom, d_inter
 
 
 def calculate_all_metrics(G: nx.Graph, node_info: pd.DataFrame):
     s_eq, eigenvector_centrality = calculate_structural_positioning_metrics(G, node_info)
-    conexiones_anomalas, indice_frontera, d_anom, p_anom = calculate_anomaly_metrics(G, s_eq)
+    conexiones_anomalas, indice_frontera, d_anom, p_anom, d_inter = calculate_anomaly_metrics(G, s_eq)
     print("OK. Todas las métricas calculadas.")
     return {
         's_eq': s_eq,
@@ -162,6 +164,7 @@ def calculate_all_metrics(G: nx.Graph, node_info: pd.DataFrame):
         'indice_frontera': indice_frontera,
         'd_anom': d_anom,
         'p_anom': p_anom,
+        'd_inter': d_inter,
     }
 
 
@@ -206,7 +209,7 @@ def generate_enhanced_visualizations(df_metrics: pd.DataFrame, G: nx.Graph, resu
         print("OK. Gráfico 2 guardado")
 
         # 3) Matriz de correlación
-        metrics_cols = ['s_eq', 'eigenvector_centrality', 'conexiones_anomalas', 'indice_frontera', 'd_anom', 'p_anom', 'degree_total']
+        metrics_cols = ['s_eq', 'eigenvector_centrality', 'conexiones_anomalas', 'indice_frontera', 'd_anom', 'p_anom', 'p_ext', 'sh_score', 'degree_total']
         corr = df_polarized[metrics_cols].corr()
         fig, ax = plt.subplots(figsize=(10, 8))
         sns.heatmap(corr, annot=True, cmap='RdBu_r', center=0, square=True, fmt='.2f', cbar_kws={'shrink': 0.8}, ax=ax)
@@ -217,7 +220,7 @@ def generate_enhanced_visualizations(df_metrics: pd.DataFrame, G: nx.Graph, resu
         print("OK. Gráfico 3 guardado")
 
         # 4) PCA
-        features = ['s_eq', 'eigenvector_centrality', 'conexiones_anomalas', 'indice_frontera', 'd_anom', 'p_anom', 'degree_total']
+        features = ['s_eq', 'eigenvector_centrality', 'conexiones_anomalas', 'indice_frontera', 'd_anom', 'p_anom', 'p_ext', 'sh_score', 'degree_total']
         df_pca_input = df_metrics[features].replace([np.inf, -np.inf], 0).fillna(0)
         scaler = StandardScaler()
         scaled = scaler.fit_transform(df_pca_input)
@@ -279,6 +282,10 @@ def generate_html_report(df_metrics: pd.DataFrame, results_dir: str, title: str 
     # Tops
     top_frontier = df_metrics.sort_values('indice_frontera', ascending=False).head(15)
     top_anom = df_metrics.sort_values('d_anom', ascending=False).head(15)
+    has_sh = 'sh_score' in df_metrics.columns
+    top_sh = df_metrics.sort_values('sh_score', ascending=False).head(20) if has_sh else pd.DataFrame()
+    has_sh_star = 'sh_star' in df_metrics.columns
+    top_sh_star = df_metrics.sort_values('sh_star', ascending=False).head(20) if has_sh_star else pd.DataFrame()
     top_degree_c1 = (
         df_metrics[df_metrics['CLUSTER'] == 1]
         .sort_values('degree_total', ascending=False)
@@ -409,6 +416,10 @@ def generate_html_report(df_metrics: pd.DataFrame, results_dir: str, title: str 
     {df_to_html_table(top_degree_c2, ['degree_total','s_eq','indice_frontera','d_anom','p_anom','CLUSTER'])}
   </div>
 
+  {('<div class="card" style="overflow-x:auto; margin-top:16px;">\n    <h3>Top 20 Structural Hole (SH) Score</h3>\n    ' + df_to_html_table(top_sh, ['sh_rank','sh_score','indice_frontera','p_anom','p_ext','eigenvector_centrality','degree_total','CLUSTER']) + '\n  </div>') if has_sh else ''}
+
+  {('<div class="card" style="overflow-x:auto; margin-top:16px;">\n    <h3>Top 20 SH* (Estructura + Agencia)</h3>\n    ' + df_to_html_table(top_sh_star, ['sh_star_rank','sh_star','indice_frontera_star','h_ext','d_anom','p_anom','degree_total','CLUSTER']) + '\n  </div>') if has_sh_star else ''}
+
   <h2>Figuras</h2>
   <div class="grid">
     {''.join([f'<div class="card"><img src="{img}" alt="{img}"><div class="muted">{img}</div></div>' for img in imgs])}
@@ -454,7 +465,9 @@ def generate_html_report(df_metrics: pd.DataFrame, results_dir: str, title: str 
 
 
 # --- Orquestación ---
-def run_frontier_metrics(input_csv_path: str, results_dir: str):
+def run_frontier_metrics(input_csv_path: str, results_dir: str, top_k: int = 20,
+                         shstar_lambda: float = 0.3, shstar_tau: float = 5.0,
+                         shstar_degmin: int = 10, shstar_dextmin: int = 3):
     os.makedirs(results_dir, exist_ok=True)
 
     df_edges, node_info = load_and_prepare_data(input_csv_path)
@@ -474,7 +487,87 @@ def run_frontier_metrics(input_csv_path: str, results_dir: str):
         metrics_df[metric_name] = metrics_df['node'].map(metric_dict).fillna(0)
     degree = dict(G.degree())
     metrics_df['degree_total'] = metrics_df['node'].map(degree).fillna(0).astype(int)
+    # p_ext: fracción de conexiones inter-cluster sobre grado total
+    if 'd_inter' in metrics:
+        metrics_df['p_ext'] = np.where(metrics_df['degree_total'] > 0,
+                                       metrics_df['d_inter'] / metrics_df['degree_total'], 0.0)
+    else:
+        metrics_df['p_ext'] = 0.0
+
+    # Puntaje SH (s(u)): combinación de índice de frontera, P_anom, P_ext y centralidad del núcleo
+    def _z(col: pd.Series) -> pd.Series:
+        mu = col.mean()
+        sd = col.std(ddof=0)
+        if sd == 0 or np.isnan(sd):
+            return pd.Series(0.0, index=col.index)
+        return (col - mu) / sd
+
+    z_indf = _z(metrics_df['indice_frontera'].replace([np.inf, -np.inf], 0).fillna(0))
+    z_panom = _z(metrics_df['p_anom'].replace([np.inf, -np.inf], 0).fillna(0))
+    z_pext = _z(metrics_df['p_ext'].replace([np.inf, -np.inf], 0).fillna(0))
+    z_eig = _z(metrics_df['eigenvector_centrality'].replace([np.inf, -np.inf], 0).fillna(0))
+
+    w_indf, w_panom, w_pext, w_eig = 1.0, 1.0, 0.7, 0.5
+    metrics_df['sh_score'] = (
+        w_indf * z_indf +
+        w_panom * z_panom +
+        w_pext * z_pext +
+        w_eig * z_eig
+    )
+    metrics_df['sh_rank'] = metrics_df['sh_score'].rank(ascending=False, method='dense').astype(int)
+
+    # --- Nueva métrica: impredecibilidad externa (H_ext) + estructura ---
+    eps = 1e-12
+    d_ext_pos = metrics_df['d_anom'].astype(float)
+    d_ext_tot = metrics_df.get('d_inter', pd.Series(0.0, index=metrics_df.index)).astype(float)
+    p_pos = np.where(d_ext_tot > 0, d_ext_pos / d_ext_tot, 0.0)
+    p_neg = np.clip(1.0 - p_pos, 0.0, 1.0)
+    h_ext = -(p_pos * np.log(np.clip(p_pos, eps, 1.0)) + p_neg * np.log(np.clip(p_neg, eps, 1.0)))
+    metrics_df['h_ext'] = h_ext
+
+    # Índice de frontera alternativo basado en d_anom (consistente con la definición propuesta)
+    d_tot = metrics_df['degree_total'].astype(float)
+    metrics_df['indice_frontera_star'] = np.where(d_tot > 0, (d_ext_pos / d_tot) * np.log1p(d_ext_pos), 0.0)
+
+    # Filtro de soporte externo y máscara de solidez estructural
+    f_support = np.minimum(1.0, np.where(d_ext_tot > 0, d_ext_tot / float(shstar_tau), 0.0))
+    solid_mask = (metrics_df['degree_total'] >= int(shstar_degmin)) & (d_ext_tot >= float(shstar_dextmin))
+
+    sh_star = metrics_df['indice_frontera_star'] * f_support + float(shstar_lambda) * metrics_df['h_ext']
+    sh_star = np.where(solid_mask.values, sh_star, 0.0)
+    metrics_df['sh_star'] = sh_star
+    metrics_df['sh_star_rank'] = pd.Series(sh_star, index=metrics_df.index).rank(ascending=False, method='dense').astype(int)
+
     metrics_df = metrics_df.set_index('node')
+
+    # Exportar Top-k SH spanners (antes de guardar CSV principal)
+    top_cols = ['sh_score','sh_rank','indice_frontera','d_anom','p_anom','p_ext',
+                'eigenvector_centrality','degree_total','CLUSTER']
+    top_cols = [c for c in top_cols if c in metrics_df.columns]
+    topk_df = (
+        metrics_df.sort_values('sh_score', ascending=False)
+        .head(int(max(1, top_k)))
+        [top_cols]
+        .reset_index()
+        .rename(columns={'index': 'node'})
+    )
+    topk_path = os.path.join(results_dir, f'top_{int(max(1, top_k))}_sh_spanners.csv')
+    topk_df.to_csv(topk_path, index=False, encoding='utf-8-sig')
+    print(f"Top-{top_k} SH spanners guardado en: {topk_path}")
+
+    # Exportar Top-k SH* (estructura+agencia)
+    top_cols_star = ['sh_star','sh_star_rank','indice_frontera_star','h_ext','d_anom','p_anom','d_inter','degree_total','CLUSTER']
+    top_cols_star = [c for c in top_cols_star if c in metrics_df.columns]
+    topk_star_df = (
+        metrics_df.sort_values('sh_star', ascending=False)
+        .head(int(max(1, top_k)))
+        [top_cols_star]
+        .reset_index()
+        .rename(columns={'index': 'node'})
+    )
+    topk_star_path = os.path.join(results_dir, f'top_{int(max(1, top_k))}_sh_star_spanners.csv')
+    topk_star_df.to_csv(topk_star_path, index=False, encoding='utf-8-sig')
+    print(f"Top-{top_k} SH* (estructura+agencia) guardado en: {topk_star_path}")
 
     # Guardar métricas
     output_csv_path = os.path.join(results_dir, 'metricas_frontera_completas.csv')
@@ -483,8 +576,9 @@ def run_frontier_metrics(input_csv_path: str, results_dir: str):
 
     # Vista previa
     print("\n--- Vista previa de métricas ---")
-    preview_cols = ['CLUSTER', 's_eq', 'eigenvector_centrality', 'indice_frontera', 'd_anom', 'p_anom']
-    print(metrics_df[preview_cols].head(10).round(3).to_string())
+    preview_cols = ['CLUSTER', 's_eq', 'eigenvector_centrality', 'indice_frontera', 'd_anom', 'p_anom', 'h_ext', 'sh_star']
+    cols_exist = [c for c in preview_cols if c in metrics_df.columns]
+    print(metrics_df[cols_exist].head(10).round(3).to_string())
 
     # Visualizaciones
     generate_enhanced_visualizations(metrics_df.copy(), G.copy(), results_dir)
@@ -499,6 +593,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Métricas de frontera para CSV clusterizado")
     parser.add_argument("--input", help="Ruta al CSV clusterizado (FROM_NODE, TO_NODE, SIGN, CLUSTER)")
     parser.add_argument("--results-dir", default=RESULTS_DIR, help="Directorio para guardar resultados")
+    parser.add_argument("--topk", type=int, default=20, help="Cantidad Top-k para ranking SH")
+    parser.add_argument("--shstar-lambda", type=float, default=0.3, help="Peso λ de H_ext en SH* (agencia)")
+    parser.add_argument("--shstar-tau", type=float, default=5.0, help="Umbral τ para soporte externo en SH*")
+    parser.add_argument("--shstar-degmin", type=int, default=10, help="Grado mínimo total para ser considerado en SH*")
+    parser.add_argument("--shstar-dextmin", type=int, default=3, help="Mínimo de enlaces externos para ser considerado en SH*")
     return parser.parse_args()
 
 
@@ -515,7 +614,15 @@ def main():
             print("No se encontró archivo clusterizado en data/datasets_cluster. Usa --input.")
             sys.exit(1)
 
-    run_frontier_metrics(input_path, results_dir)
+    run_frontier_metrics(
+        input_path,
+        results_dir,
+        top_k=int(max(1, args.topk)),
+        shstar_lambda=float(getattr(args, 'shstar_lambda', 0.3)),
+        shstar_tau=float(getattr(args, 'shstar_tau', 5.0)),
+        shstar_degmin=int(getattr(args, 'shstar_degmin', 10)),
+        shstar_dextmin=int(getattr(args, 'shstar_dextmin', 3)),
+    )
 
 
 if __name__ == "__main__":
